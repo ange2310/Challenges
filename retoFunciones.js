@@ -11,4 +11,7 @@ function numPar(num){
         console.log(`El número ${num} es impar`)
     }
 }
-numPar()
+numPar(7) //Se debe poner un argumento para que funcione- En este caso 7 es impar
+
+const numsPar = (num) => num%2==0 ? `El número ${num} es par` : `El número ${num} es impar`;
+console.log(numsPar(4))//Se debe poner un argumento para que funcione- En este caso 4 es par
