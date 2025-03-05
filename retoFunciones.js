@@ -1,6 +1,6 @@
 //Angelica Marcillo
 
-//Reto: Hacer que la funcion reciba un número y determine si es par o impar
+//Reto 1: Hacer que la funcion reciba un número y determine si es par o impar
 
 //Regular Functions
 
