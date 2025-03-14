@@ -1,0 +1,113 @@
+/* Estilos globales */
+
+.welcomebar{
+    justify-content: space-between;
+    width: 100%; /* Ocupa todo el ancho */
+    height: 90px; /* Altura de la barra */
+    background: #f4f4f8; /* Color de fondo */
+    display: flex;
+    justify-content: space-around; /* Espacia los enlaces uniformemente */
+    position: fixed; /* Fija la barra en la parte superior */
+    top: 0;
+    left: 0;
+    padding: 0 20px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para dar efecto flotante */
+    z-index: -1000; /* Asegura que esté por encima de otros elementos */
+}
+
+.home-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 200px;
+    border-radius: 20px;
+    width: 100%;
+    
+}
+
+h1{
+
+    margin-top: 20px;
+    font-weight: bolder;
+    font-size: 45px;
+    margin-left: 30px
+}
+
+.subtitle{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 50px;
+}
+
+body {
+    display: flex;
+    background-color: #081117;
+    color: #0f0e0e;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Contenedor principal */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+/* Sección de blogs en cuadrícula */
+.blog-grid {
+    display: flex; /* Usa flexbox para alinear las cards en fila */
+    flex-wrap: wrap; /* Permite que las cards pasen a la siguiente línea si no hay espacio */
+    gap: 20px; /* Espacio entre las cards */
+    justify-content: center; /* Centra las cards horizontalmente */
+}
+
+.blog-card {
+    width: 300px; /* Ancho fijo para cada card */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    text-align: center;
+    flex: 1; /* Permite que las cards se ajusten al espacio */
+    max-width: 250px; /* Evita que se hagan demasiado grandes */
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 70px;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    padding-bottom: 150px;
+}
+
+.blog-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.blog-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.descripcion span {
+    font-weight: bold;
+    color: #444;
+}
