@@ -1,51 +1,82 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { Registro } from './components/Register.jsx'
-import { Login } from './components/Login.jsx'
-import { NavBar } from './components/Navbar.jsx'
-import { Crud } from './components/Crud.jsx'
-import { Provider } from 'react-redux'
-import { store } from './store/Store.jsx'
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './store/Store.jsx';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import './index.css';
+import App from './App.jsx';
+import { Registro } from './components/Register.jsx';
+import { Login } from './components/Login.jsx';
+import { NavBar } from './components/Navbar.jsx';
+import { Crud } from './components/Crud.jsx';
 
-// Componente Layout que incluye la NavBar
-const Layout = () => {
+
+function ProtectedRoute({ children }) {
+  const { status } = store.getState().auth;
+  
+  if (status === 'checking') {
+    return <div>Cargando...</div>;
+  }
+  
+  if (status !== 'authenticated') {
+    return <Navigate to="/login" />;
+  }
+  
   return (
     <>
       <NavBar />
-      <Outlet /> {/* Aquí se renderizarán los componentes hijos de las rutas */}
+      {children}
     </>
-  )
+  );
 }
 
-// Componente para rutas protegidas
-const PrivateRoute = () => {
-  const { status } = store.getState().auth;
-  
-  if (status === 'authenticated') {
-    return <Outlet />;
-  }
-  
-  return <Navigate to="/login" />;
-};
+
+function PublicLayout({ children }) {
+  return (
+    <>
+      <NavBar />
+      {children}
+    </>
+  );
+}
 
 createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
+  <StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
           
-          {/* Rutas protegidas */}
-          <Route element={<PrivateRoute />}>
-            <Route path="/crud" element={<Crud />} />
-          </Route>
+          <Route 
+            path="/login" 
+            element={
+              <PublicLayout>
+                <Login />
+              </PublicLayout>
+            } 
+          />
           
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </Provider>
-)
+          <Route 
+            path="/registro" 
+            element={
+              <PublicLayout>
+                <Registro />
+              </PublicLayout>
+            } 
+          />
+
+          <Route 
+            path="/crud" 
+            element={
+              <ProtectedRoute>
+                <Crud />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  </StrictMode>
+);

@@ -1,38 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Registro } from './components/Register'
-import { Login } from './components/Login'
-import { NavBar } from './components/Navbar'
-import './App.css'
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase/config';
+import { login, logout } from './store/slices/auth/AuthSlice';
+import { Navigate } from 'react-router-dom';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
+  const { status } = useSelector(state => state.auth);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  useEffect(() => {
+    // Configurar el listener para cambios en la autenticación
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Usuario autenticado
+        console.log("Usuario autenticado en App:", user.uid);
+        dispatch(login({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email.split('@')[0],
+          photoURL: user.photoURL
+        }));
+      } else {
+        // Usuario no autenticado
+        console.log("No hay usuario autenticado");
+        dispatch(logout({ errorMessage: null }));
+      }
+    });
+
+    // Limpiar el listener al desmontar
+    return () => unsubscribe();
+  }, [dispatch]);
+
+  // Decidir redirección basada en el estado de autenticación
+  if (status === 'authenticated') {
+    return <Navigate to="/crud" />;
+  }
+
+  return <Navigate to="/login" />;
 }
 
-export default App
+export default App;

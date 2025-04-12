@@ -1,5 +1,5 @@
-import { db } from "../firebase/config";
-import { collection, addDoc, query, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db, auth } from "../firebase/config";
+import { ref, set, get, update as updateDB, remove as removeDB, push } from "firebase/database";
 import { useState } from "react";
 
 const useCollection = (table) => {
@@ -7,128 +7,134 @@ const useCollection = (table) => {
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
 
-  const getAll = async (condition) => {
+  // Obtener todos los documentos
+  const getAll = async () => {
     setIsPending(true);
     setError(null);
     
     try {
+      const dbRef = ref(db, table);
+      const snapshot = await get(dbRef);
+      
       let newResults = [];
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // Convertir el objeto en un array con IDs
+        Object.keys(data).forEach((key) => {
+          newResults.push({
+            ...data[key],
+            id: key
+          });
+        });
+      }
       
-      const q = query(collection(db, table));
-      const querySnapshot = await getDocs(q);
-      
-      querySnapshot.forEach((doc) => {
-        newResults.push({ ...doc.data(), id: doc.id });
-      });
-      
-      console.log(`Cargados ${newResults.length} usuarios de ${table}`);
-      // Actualizar el estado con los nuevos resultados
+      console.log(`Cargados ${newResults.length} documentos de ${table}`);
       setResults(newResults);
+      setIsPending(false);
+      return newResults;
     } catch (error) {
       console.error("Error obteniendo documentos:", error);
       setError("No se pudieron cargar los datos");
-    } finally {
       setIsPending(false);
+      throw error;
     }
   };
 
-  // Función para añadir un nuevo documento
-  const add = async (doc) => {
+  // Añadir un nuevo documento
+  const add = async (data) => {
     setError(null);
     setIsPending(true);
     
     try {
-      // Añade logs para depuración
-      console.log("Intentando guardar documento:", doc);
+      console.log("Intentando guardar documento:", data);
       console.log("En colección:", table);
       
-      let refDoc = await addDoc(collection(db, table), doc);
-      console.log("Documento guardado con ID:", refDoc.id);
+      // Generar una nueva referencia con ID único
+      const newItemRef = push(ref(db, table));
+      
+      const sanitizedData = { ...data };
+      // Asegurar que createdAt sea string si es un objeto Date
+      if (sanitizedData.createdAt instanceof Date) {
+        sanitizedData.createdAt = sanitizedData.createdAt.toISOString();
+      }
+      
+      // Guardar los datos
+      await set(newItemRef, sanitizedData);
+      
+      const newItemId = newItemRef.key;
+      console.log("Documento guardado con ID:", newItemId);
       
       setIsPending(false);
-      return refDoc;
+      return { id: newItemId, ...sanitizedData };
     } catch(err) {
       console.error("Error al guardar:", err);
-      setError("Could not save the document");
+      setError("No se pudo guardar el documento: " + err.message);
       setIsPending(false);
-      return null;
+      throw err;
     }
   };
-  const save = async () => {
-    try {
-      console.log("Iniciando guardado...");
-      console.log("Estado de autenticación:", isAuthenticated);
-      console.log("Datos a guardar:", user);
-      
-      if (!isAuthenticated) {
-        alert("Debes estar autenticado para realizar esta acción");
-        return;
-      }
-      
-      if (editingId) {
-        console.log("Actualizando usuario con ID:", editingId);
-        const updateResult = await update(editingId, user);
-        console.log("Resultado de actualización:", updateResult);
-      } else {
-        console.log("Añadiendo nuevo usuario");
-        const addResult = await add(user);
-        console.log("Resultado de añadir:", addResult);
-      }
-      
-      setUser({ name: '' });
-      setEditingId(null);
-      
-      console.log("Recargando documentos...");
-      await getAllDocs();
-      console.log("Documentos recargados");
-    } catch (error) {
-      console.error("Error en operación de guardar:", error);
-      alert("Error al guardar. Verifica la consola para más detalles.");
-    }
-  }
 
-  // Función para actualizar un documento existente
+  // Actualizar un documento existente
   const update = async (id, updatedData) => {
     setError(null);
     setIsPending(true);
     
     try {
-      console.log("Actualizando documento con ID:", id, "Datos:", updatedData);
+      console.log("Actualizando documento:", id, updatedData);
       
-      const docRef = doc(db, table, id);
-      await updateDoc(docRef, updatedData);
+      // Crear un objeto con la ruta específica para la actualización
+      const updates = {};
+      updates[`${table}/${id}`] = updatedData;
+      
+      // Realizar la actualización
+      await updateDB(ref(db), updates);
       
       console.log("Documento actualizado con éxito");
       setIsPending(false);
       return true;
     } catch(err) {
       console.error("Error al actualizar documento:", err);
-      setError("No se pudo actualizar el documento");
+      setError("No se pudo actualizar el documento: " + err.message);
       setIsPending(false);
-      return false;
+      throw err;
     }
   };
 
-  // Función para eliminar un documento
+  // Eliminar un documento
   const remove = async (id) => {
     setError(null);
     setIsPending(true);
     
     try {
-      const docRef = doc(db, table, id);
-      await deleteDoc(docRef);
-      console.log("Documento eliminado: " + id);
+      console.log("Eliminando documento:", id);
+      
+      // Referencia al documento específico
+      const itemRef = ref(db, `${table}/${id}`);
+      
+      // Eliminar el documento
+      await removeDB(itemRef);
+      
+      console.log("Documento eliminado con éxito");
       setIsPending(false);
       return true;
     } catch(err) {
-      console.log(err.message);
-      setError("Could not delete the document");
+      console.error("Error al eliminar documento:", err);
+      setError("No se pudo eliminar el documento: " + err.message);
       setIsPending(false);
-      return false;
+      throw err;
     }
   };
 
-  return { error, isPending, results, add, getAll, save,update, remove };
+  return { 
+    results, 
+    error, 
+    isPending, 
+    add, 
+    getAll, 
+    update, 
+    remove 
+  };
 };
 
 export default useCollection;
