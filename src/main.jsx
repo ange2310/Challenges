@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './store/Store.jsx';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import './index.css';
-import App from './App.jsx';
+import App from './App';
 import { Registro } from './components/Register.jsx';
 import { Login } from './components/Login.jsx';
 import { NavBar } from './components/Navbar.jsx';
 import { Crud } from './components/Crud.jsx';
+import { Chat } from './components/Chat.jsx'; 
 
 //
 function ProtectedRoute({ children }) {
@@ -70,6 +70,15 @@ createRoot(document.getElementById('root')).render(
             element={
               <ProtectedRoute>
                 <Crud />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route 
+            path="/chat" 
+            element={
+              <ProtectedRoute>
+                <Chat />
               </ProtectedRoute>
             }
           />

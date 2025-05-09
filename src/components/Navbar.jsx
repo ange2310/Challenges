@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutFirebase } from '../store/slices/auth/thunks/Thunk';
 import { Link } from 'react-router-dom';
-//Sirve para seleccionar la opcion ideal de la barra de navegacion
+
+
 export const NavBar = () => {
     const dispatch = useDispatch();
     const { status, displayName, photoURL } = useSelector(state => state.auth);
@@ -20,6 +21,7 @@ export const NavBar = () => {
             {status === 'authenticated' && (
                 <div className="navbar-links">
                     <Link to="/crud">CRUD Firebase</Link>
+                    <Link to="/chat">Chat</Link>
                 </div>
             )}
             
