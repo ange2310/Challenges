@@ -1,0 +1,65 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: $spacing-md;
+  will-change: filter;
+  transition: filter $transition-medium;
+  
+  &:hover {
+    @include logo-glow($shadow-primary);
+  }
+  
+  &.react:hover {
+    @include logo-glow($shadow-react);
+  }
+}
+
+@keyframes logoSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logoSpin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: $spacing-lg;
+}
+
+.readTheDocs {
+  color: $text-muted;
+}
+
+.title {
+  margin-bottom: $spacing-lg;
+}
+
+.categoriesList {
+  list-style: none;
+  padding: 0;
+  margin: $spacing-lg 0;
+  
+  li {
+    padding: $spacing-xs $spacing-sm;
+    margin: $spacing-xs 0;
+    background-color: rgba($primary-color, 0.1);
+    border-radius: $border-radius;
+    border-left: 3px solid $primary-color;
+  }
+}
