@@ -1,0 +1,28 @@
+@mixin button-base {
+  border-radius: $border-radius;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+}
+
+@mixin logo-glow($color) {
+  filter: drop-shadow(0 0 2em $color);
+}
+
+@mixin center-flex {
+  display: flex;
+  place-items: center;
+}
+
+@mixin theme-colors($bg, $text, $button-bg) {
+  color: $text;
+  background-color: $bg;
+  
+  button {
+    background-color: $button-bg;
+  }
+}

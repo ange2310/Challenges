@@ -1,0 +1,33 @@
+// Colores
+$primary-color: #646cff;
+$primary-hover: #535bf2;
+$background-dark: #242424;
+$background-light: #ffffff;
+$text-light: rgba(255, 255, 255, 0.87);
+$text-dark: #213547;
+$card-bg: #1a1a1a;
+$card-bg-light: #f9f9f9;
+$shadow-primary: #646cffaa;
+$shadow-react: #61dafbaa;
+$text-muted: #888;
+
+// Espaciado
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+// Tipografía
+$font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+$font-size-base: 1em;
+$font-size-large: 3.2em;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+
+// Transiciones
+$transition-fast: 0.25s;
+$transition-medium: 0.3s;
+
+// Bordes
+$border-radius: 8px;
