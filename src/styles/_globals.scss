@@ -1,0 +1,60 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:root {
+  font-family: $font-family;
+  line-height: 1.5;
+  font-weight: $font-weight-normal;
+  color-scheme: light dark;
+  @include theme-colors($background-dark, $text-light, $card-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: $font-weight-medium;
+  color: $primary-color;
+  text-decoration: inherit;
+  
+  &:hover {
+    color: $primary-hover;
+  }
+}
+
+body {
+  margin: 0;
+  @include center-flex;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: $font-size-large;
+  line-height: 1.1;
+}
+
+button {
+  @include button-base;
+  background-color: $card-bg;
+  
+  &:hover {
+    border-color: $primary-color;
+  }
+  
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    @include theme-colors($background-light, $text-dark, $card-bg-light);
+  }
+  
+  a:hover {
+    color: #747bff;
+  }
+}
